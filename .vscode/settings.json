@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "192.168.1.152",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "Baseball Server",
+            "username": "root",
+            "database": "Baseball",
+            "password": "raspberry"
+        }
+    ]
+}
