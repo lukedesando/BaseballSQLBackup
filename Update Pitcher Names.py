@@ -2,6 +2,8 @@ from mariadb import connect, Error
 import sys
 from getpass import getpass
 import mariadb
+#FIXME: Need to import from Beat-The-Streak repo
+from BackgroundFunctions import Get_Player_Name
 
 localhost = '192.168.1.152'
 
@@ -21,6 +23,7 @@ try:
     cur = conn.cursor()
     cur.execute(select_pitcherID_query)
     for PitcherID, PitcherName in cur:
+
         print(f"PitcherID: {PitcherID}, PitcherName: {PitcherName}")
 except Error as e:
     print(e)
