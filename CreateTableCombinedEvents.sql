@@ -5,36 +5,37 @@ Create TABLE CombinedEvents(
     batter_name text,
     estimated_ba DOUBLE,
     actual_ba DOUBLE,
-    PA INT
+    PA INT,
+    AB INT,
+    Hits INT
 )
 select
     pitcher,
     batter,
     player_name as batter_name,
     avg(estimated_ba_using_speedangle) as estimated_ba,
-    count(batter) as PA
+    count(batter) as PA,
+    sum(babip_value) as Hits
 from
     DatabaseBatterEvents
 group by
     batter,
     pitcher;
 
+Update CombinedEvents c
+	Inner JOIN(
+select batter, pitcher, count(batter) as AB from DatabaseBatterEvents 
+where description = 'hit_into_play' OR description = 'swinging_strike' OR description = 'swinging_strike_blocked' OR description = 'called_strike' or description = 'foul_tip'
+group by batter, pitcher) b
+	on c.batter = b.batter and c.pitcher = b.pitcher
+Set c.AB = b.AB;
+
 update
     CombinedEvents C
-    inner join strippedPitchers P on
-    C.pitcher = P.pitcher
+    inner join MLBIDs ID on
+    C.pitcher = ID.player
 set
-    C.pitcher_name = P.pitcher_name
+    C.pitcher_name = P.PlayerName
 where C.pitcher_name is NULL;
 
-UPDATE
-    CombinedEvents
-set
-    actual_ba = AVG(babip_value)
-from
-    DatabaseBatterEvents
-WHERE
-    description = 'hit_into_play'
-    group by batter,pitcher;
-
-select avg(babip_value) as BA, pitcher, batter, count(batter) as PA from DatabaseBatterEvents where description = 'hit_into_play' group by batter, pitcher;
+update CombinedEvents set actual_ba = Hits/AB;
